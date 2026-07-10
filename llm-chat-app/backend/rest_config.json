@@ -1,0 +1,18 @@
+{
+    "rest": {
+    "RestGenerator": {
+    "name": "llm-chat-app-protected",
+    "uri": "http://localhost:8000/api/chat",
+    "method": "post",
+    "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzIiwibmFtZSI6IlRlc3QiLCJleHAiOjE3ODM2NzYyMDd9.1ZKI7DzjHGsfYKPaX8Z0mpok3zcMTRHCINiDod40k2M"
+    },
+    "req_template_json_object": {
+        "messages": [{"role": "user", "content": "$INPUT"}]
+    },
+    "response_json": true,
+    "response_json_field": "reply"
+    }
+    }
+}

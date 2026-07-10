@@ -29,6 +29,42 @@ export default function App() {
     setSession(null);
   };
 
+  useEffect(() => {
+    if (!session) return;
+
+    const TIMEOUT_MS = 2 * 60 * 60 * 1000; // 2 heures
+
+    let timer;
+    let hiddenAt = null;
+
+    const resetTimer = () => {
+      clearTimeout(timer);
+      timer = setTimeout(logout, TIMEOUT_MS);
+    };
+
+    const handleVisibility = () => {
+      if (document.hidden) {
+        hiddenAt = Date.now();
+      } else if (hiddenAt) {
+        const elapsed = Date.now() - hiddenAt;
+        if (elapsed > TIMEOUT_MS) logout();
+        hiddenAt = null;
+        resetTimer();
+      }
+    };
+
+    const events = ["mousemove", "keydown", "click", "scroll"];
+    events.forEach((e) => window.addEventListener(e, resetTimer));
+    document.addEventListener("visibilitychange", handleVisibility);
+    resetTimer();
+
+    return () => {
+      clearTimeout(timer);
+      events.forEach((e) => window.removeEventListener(e, resetTimer));
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
+  }, [session, logout]);
+
   return session ? (
     <ChatScreen session={session} onLogout={logout} />
   ) : (
