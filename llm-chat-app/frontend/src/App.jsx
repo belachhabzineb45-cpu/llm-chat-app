@@ -247,6 +247,10 @@ function ChatScreen({ session, onLogout }) {
         onLogout();
         return;
       }
+      if (res.status === 429) {
+        setMessages((prev) => [...prev, { role: "assistant", content: "⏳ Trop de messages envoyés rapidement. Attendez une minute avant de réessayer." }]);
+        return;
+      }
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail || "Erreur serveur.");
       setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);

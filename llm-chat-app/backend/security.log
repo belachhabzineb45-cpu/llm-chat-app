@@ -69,3 +69,4 @@
 2026-07-09 10:56:04,542 - WARNING - �chec de connexion - email tent�: belachhabzineb45@gmail.com - IP: 127.0.0.1
 2026-07-09 10:56:06,277 - WARNING - �chec de connexion - email tent�: belachhabzineb45@gmail.com - IP: 127.0.0.1
 2026-07-09 14:28:54,712 - WARNING - �chec de connexion - email tent�: belachhabzineb45@gmail.com - IP: 127.0.0.1
+2026-07-13 11:23:19,579 - WARNING - ratelimit 10 per 1 minute (127.0.0.1) exceeded at endpoint: /api/chat

@@ -19,6 +19,10 @@ import sqlite3
 import time
 from contextlib import contextmanager
 
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+
 import httpx
 import jwt
 from fastapi import Depends, FastAPI, HTTPException
@@ -101,6 +105,10 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 
 app = FastAPI(title="LLM Chat API")
+
+limiter = Limiter(key_func=get_remote_address)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # CORS : autorise le frontend React en développement
 app.add_middleware(
@@ -372,7 +380,8 @@ def reponse_compromise(texte: str) -> bool:
 
 
 @app.post("/api/chat")
-async def chat(data: ChatIn, user: dict = Depends(get_current_user)):
+@limiter.limit("10/minute")
+async def chat(request: Request, data: ChatIn, user: dict = Depends(get_current_user)):
     if not data.messages:
         raise HTTPException(status_code=400, detail="Aucun message fourni.")
 
