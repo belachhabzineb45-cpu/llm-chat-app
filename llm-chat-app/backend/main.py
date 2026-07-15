@@ -32,6 +32,15 @@ from pydantic import BaseModel, EmailStr, Field
 from dotenv import load_dotenv
 load_dotenv()
 
+from starlette.middleware.base import BaseHTTPMiddleware
+
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        response = await call_next(request)
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        return response
+    
 import logging
 
 logging.basicConfig(
@@ -109,6 +118,7 @@ app = FastAPI(title="LLM Chat API")
 limiter = Limiter(key_func=get_remote_address)
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_middleware(SecurityHeadersMiddleware)
 
 # CORS : autorise le frontend React en développement
 app.add_middleware(
